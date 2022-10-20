@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "labo1"
+		},
+		{
+			"path": "labo2"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"contiki.h": "c",
+			"button-sensor.h": "c",
+			"sensors.h": "c"
+		}
+	}
+}

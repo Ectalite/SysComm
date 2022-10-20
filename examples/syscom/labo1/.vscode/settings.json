@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "contiki.h": "c",
+        "button-sensor.h": "c",
+        "sensors.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
