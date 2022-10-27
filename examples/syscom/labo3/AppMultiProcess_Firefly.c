@@ -7,14 +7,10 @@
  */
 
 #include "contiki.h"
-#include "dev/button-sensor.h"
 #include "dev/leds.h"
+#include "button-hal.h"
+#include "process.h"
 #include <stdio.h> 
-
-#undef LEDS_BLUE 
-#define LEDS_BLUE LEDS_YELLOW
-#undef LEDS_ALL
-#define LEDS_ALL LEDS_BLUE|LEDS_GREEN|LEDS_RED
 /*---------------------------------------------------------------------------*/
 PROCESS(Main_process, "Main process");
 PROCESS(Toggle_process, "Toggle process");
@@ -28,7 +24,6 @@ static process_event_t event2;
 PROCESS_THREAD(Main_process, ev, data)
 {
   static struct etimer timer;
-  SENSORS_ACTIVATE(button_sensor);
   static leds_mask_t Led = LEDS_BLUE;
   PROCESS_BEGIN();
 
@@ -45,11 +40,12 @@ PROCESS_THREAD(Main_process, ev, data)
       process_post(&Toggle_process,event1,&Led);
       etimer_reset(&timer);
     }
-    if((ev == sensors_event) && (data == &button_sensor))
+    if(ev == button_hal_press_event)
     {
       printf(" - BUTTON\n");
       process_post(&Color_process,event2,&Led);
     }
+    /* Wait for the periodic timer to expire and then restart the timer. */
   }
 
   PROCESS_END();
