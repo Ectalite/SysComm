@@ -9,6 +9,7 @@
 static process_event_t led_off_event;
 static struct etimer led_etimer;
 static struct etimer et;
+static struct etimer etDoubleTap;
 /*---------------------------------------------------------------------------*/
 PROCESS(accel_process, "Test Accel process");
 PROCESS(led_process, "LED handling process");
@@ -58,13 +59,16 @@ void accm_ff_cb(uint8_t reg)
 void accm_tap_cb(uint8_t reg)
 {
   process_post(&led_process, led_off_event, NULL);
-  if(reg & ADXL345_INT_TAP) 
+  if(etimer_expired(&etDoubleTap))
   {
-    leds_on(LEDS_RED);
-    printf("~~[%u] Tap detected! (0x%02X) -- ",
-           ((uint16_t)clock_time()) / 128, reg);
+    if(reg & ADXL345_INT_TAP) 
+    {
+      leds_on(LEDS_RED);
+      printf("~~[%u] Tap detected! (0x%02X) -- ",
+            ((uint16_t)clock_time()) / 128, reg);
+    }
+    print_int(reg);
   }
-  print_int(reg);
 }
 
 //double tap callback
@@ -77,6 +81,7 @@ void accm_doubletap_cb(uint8_t reg)
     printf("~~[%u] Double Tap detected! (0x%02X) -- ",
            ((uint16_t)clock_time()) / 128, reg);
   }
+  etimer_set(&etDoubleTap, CLOCK_SECOND);
   print_int(reg);
 }
 /*---------------------------------------------------------------------------*/
