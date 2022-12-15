@@ -23,13 +23,24 @@ AUTOSTART_PROCESSES(&udp_process);
 //Global  connection
 static struct simple_udp_connection myConnection;
 
+typedef struct my_msg {
+     uint8_t id;
+     uint16_t counter;
+     uint16_t tmp102;
+     uint16_t adxl345_x_axis;
+     uint16_t adxl345_y_axis;
+     uint16_t adxl345_z_axis;
+     uint16_t battery;
+} my_msg_t;
+
 //Callback
-static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender_addr, 
+static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender_addr,
                     uint16_t sender_port,const uip_ipaddr_t *receiver_addr, 
                     uint16_t receiver_port, const uint8_t *data, uint16_t datalen)
 {
-    printf("Message received on port %u\n", (unsigned int)receiver_port);
-    printf("%s\n",(char *)data);
+    //printf("Message received on port %u\n", (unsigned int)receiver_port);
+    static my_msg_t *pmsg = (my_msg_t *)data;
+    
 }
 
 PROCESS_THREAD(udp_process, ev, data)
@@ -47,10 +58,6 @@ PROCESS_THREAD(udp_process, ev, data)
 
     while(1) 
     {
-        printf("Event Timer\n");
-        char pcMyString[85];
-        snprintf(pcMyString, (sizeof(pcMyString)/sizeof(char)) - 1, "Bravo tu as gagné pleins d'argent! https://www.youtube.com/watch?v=E4WlUXrJgy4"); 
-        simple_udp_sendto(&myConnection, pcMyString, sizeof(pcMyString), &uipBroadcast);
         /* Wait for the periodic timer to expire and then restart the timer. */
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
         etimer_reset(&timer);
@@ -60,4 +67,11 @@ PROCESS_THREAD(udp_process, ev, data)
 }
 /*---------------------------------------------------------------------------*/
 
-
+void readFromPacket(my_msg_t *msg)
+{
+    printf("--------------------------------\n");
+    LOG_INFO_6ADDR(sender_addr);
+    printf(" Data: ID = %d, Counter = %d, Battery = %d, Temp = %d, x = %d, y = %d, z = %d\n",
+        pmsg->id, pmsg->counter, pmsg->battery, pmsg->tmp102, pmsg->adxl345_x_axis, pmsg->adxl345_y_axis, pmsg->adxl345_z_axis);
+    printf("--------------------------------\n");
+}

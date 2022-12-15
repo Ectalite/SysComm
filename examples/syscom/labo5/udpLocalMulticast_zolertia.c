@@ -28,7 +28,7 @@ static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender
                     uint16_t sender_port,const uip_ipaddr_t *receiver_addr, 
                     uint16_t receiver_port, const uint8_t *data, uint16_t datalen)
 {
-    printf("Message received on port %u\n", (unsigned int)receiver_port);
+    printf("Message received on port %u depuis l'appareil %d\n", (unsigned int)receiver_port, (int)sender_addr->u16);
     printf("%s\n",(char *)data);
 }
 
@@ -48,9 +48,9 @@ PROCESS_THREAD(udp_process, ev, data)
     while(1) 
     {
         printf("Event Timer\n");
-        char pcMyString[85];
-        snprintf(pcMyString, (sizeof(pcMyString)/sizeof(char)) - 1, "Bravo tu as gagné pleins d'argent! https://www.youtube.com/watch?v=E4WlUXrJgy4"); 
-        simple_udp_sendto(&myConnection, pcMyString, sizeof(pcMyString), &uipBroadcast);
+        //char pcMyString[20];
+        //snprintf(pcMyString, (sizeof(pcMyString)/sizeof(char)) - 1, "Bravo tu as gagné pleins d'argent! https://www.youtube.com/watch?v=E4WlUXrJgy4"); 
+        //simple_udp_sendto(&myConnection, pcMyString, sizeof(pcMyString), &uipBroadcast);
         /* Wait for the periodic timer to expire and then restart the timer. */
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
         etimer_reset(&timer);

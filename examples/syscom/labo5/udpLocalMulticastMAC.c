@@ -47,6 +47,7 @@ PROCESS_THREAD(udp_process, ev, data)
     //static uip_ipaddr_t myUipAddress = "baad::cafe";
     static uip_ipaddr_t uipBroadcast;
     uip_create_linklocal_allnodes_mcast(&uipBroadcast);
+    LOG_INFO_6ADDR(&uipBroadcast);
     PROCESS_BEGIN();
 
     /* Setup a periodic timer that expires after 5 seconds. */
