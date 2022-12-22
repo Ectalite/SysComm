@@ -32,7 +32,7 @@ static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender
                     uint16_t receiver_port, const uint8_t *data, uint16_t datalen)
 {
     //printf("Message received on port %u\n", (unsigned int)receiver_port);
-    static char msg[500];
+    static char msg[1024];
     uip_ipaddr_t ipv6Friend;
     ipv6Friend.u16[0] = 0x80fe;
     ipv6Friend.u16[1] = 0;
@@ -78,8 +78,9 @@ PROCESS_THREAD(udp_process, ev, data)
     ipv6NextFriend.u16[4] = 0x0cc3;
     ipv6NextFriend.u16[5] = 0;
     ipv6NextFriend.u16[6] = 0;
-    ipv6NextFriend.u16[7] = 0xCD00;
-    //LOG_INFO_6ADDR(&ipv6NextFriend);
+    ipv6NextFriend.u16[7] = 0xcd00;
+    LOG_INFO_6ADDR(&ipv6NextFriend);
+    printf("\n");
 
     static struct timer waittimer;
 
