@@ -1,0 +1,132 @@
+/**
+ * \file
+ *         Communication tests Labo 5.
+ * \author
+ *         Bastian
+ */
+
+#include <stdio.h>
+#include "contiki.h"
+#include "dev/leds.h"
+#include "etimer.h"
+#include "ctimer.h"
+#include "net/routing/routing.h"
+#include "net/netstack.h"
+#include "net/ipv6/simple-udp.h"
+#include "net/packetbuf.h"
+#include "project_conf.h"
+
+#ifdef LEDS_ALL
+#undef LEDS_ALL
+#endif
+
+#define LEDS_ALL (LEDS_GREEN | LEDS_RED | LEDS_BLUE | LEDS_YELLOW)
+
+#define EXEMPLE_TX_POWER 31
+#define EXEMPLE_CHANNEL 26
+#define EXEMPLE_PAN_ID 0XBEEF
+
+/---------------------------------------------------------------------------/
+
+/---------------------------------------------------------------------------/
+PROCESS(main_process, "Main process");
+AUTOSTART_PROCESSES(&main_process);
+/---------------------------------------------------------------------------/
+
+static struct simple_udp_connection sUDPConn;
+static uip_ipaddr_t sFromAddr;
+
+static void set_radio_default_parameters(void)
+{
+  NETSTACK_RADIO.set_value(RADIO_PARAM_TXPOWER, EXEMPLE_TX_POWER);
+  NETSTACK_RADIO.set_value(RADIO_PARAM_PAN_ID, EXEMPLE_PAN_ID);
+  NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, EXEMPLE_CHANNEL);
+}
+
+static void printUipAddr(const uip_ipaddr_t *addr)
+{
+  printf("[");
+  for(uint8_t i = 0 ; i < 7 ; i += 2)
+    printf("%X%X:", addr->u8[i], addr->u8[i+1]);
+  printf("%X%X]", addr->u8[14], addr->u8[15]);
+}
+
+static bool isUipAddrEqual(const uip_ipaddr_t *addr1, const uip_ipaddr_t *addr2)
+{
+  for(uint8_t i = 0 ; i < 8 ; ++i)
+  {
+    if(addr1->u16[i] != addr2->u16[i])
+      return false;
+  }
+  return true;
+}
+
+static void udp_receive(struct simple_udp_connection *c,
+         const uip_ipaddr_t *sender_addr,
+         uint16_t sender_port,
+         const uip_ipaddr_t *receiver_addr,
+         uint16_t receiver_port,
+         const uint8_t *data,
+         uint16_t datalen)
+{
+  printf("Data received\n\r{\n\r\tFrom: ");
+  printUipAddr(sender_addr);
+  printf(":%u\n\r\tTo: ", sender_port);
+  printUipAddr(receiver_addr);
+  printf(":%u\n\r\tData: ", receiver_port);
+
+  for(uint16_t i = 0 ; i < datalen ; ++i)
+    printf("%c", data[i]);
+  printf("\n\r}\n\r");
+
+  // Check if ip addr is the good one
+  if(isUipAddrEqual(sender_addr, &sFromAddr))
+  {
+    printf("\n\rSender is the good one! Process its message.\n\r");
+
+    // Put message in a buffer with terminating nul char
+    char buffer[50];
+    uint16_t i = 0;
+    for( ; i < datalen ; ++i)
+      buffer[i] = data[i];
+    buffer[i] = '\0';
+
+    // Compare string
+    if(strcmp(buffer, "LedON") == 0)
+    {
+      leds_set(LEDS_ALL);
+      printf("Led ON -> OK\n\r");
+    }
+    else if(strcmp(buffer, "LedOFF") == 0)
+    {
+      leds_set(0x00);
+      printf("Led OFF -> OK\n\r");
+    }
+    else
+      printf("Unknow command\n\r.");
+  }
+}
+
+/---------------------------------------------------------------------------/
+/* Main process, setups  */
+PROCESS_THREAD(main_process, ev, data)
+{
+  PROCESS_BEGIN();
+
+  set_radio_default_parameters();
+
+  simple_udp_register(&sUDPConn, 8765, NULL, 8765, &udp_receive); // Packets listener
+
+  uip_ip6addr(&sFromAddr, 0xfe80, 0x0, 0x0, 0x0, 0xc30c, 0x0, 0x0, 0x15);
+
+  leds_set(0x00);
+
+  while(1) 
+  {
+    printf("\n\revent");
+    PROCESS_WAIT_EVENT();
+  }
+
+  PROCESS_END();
+}
+/---------------------------------------------------------------------------/
