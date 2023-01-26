@@ -1,0 +1,18 @@
+// déclarer une adresse IPv6 (ajouter : #include "contiki-net.h")
+uip_ip6addr_t nodeAddr;
+
+// affecter une adresse IPv6 à une variable uip_ip6addr_t
+uip_ip6addr(&nodeAddr, 0xfe80, 0x0, 0x0, 0x0, 0xc30c, 0x0, 0x0, 0x1);
+
+// copier une adresse IPv6 uip_ip6addr_t
+uip_ip6addr_copy(&nodeAddrDest, &nodeAddrSrc);
+
+// récuper l'adresse du noeud
+uip_ds6_addr_t *lladdr = uip_ds6_get_link_local(-1);
+uip_ip6addr_copy(&nodeAddrSrc, &lladdr->ipaddr);
+
+// permet de savoir si le node est accessible dans le réseau
+NETSTACK_ROUTING.node_is_reachable()
+
+// récupère l'adresse ROOT du réseau
+NETSTACK_ROUTING.get_root_ipaddr(&AddrRoot)

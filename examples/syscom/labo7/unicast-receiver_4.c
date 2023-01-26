@@ -24,16 +24,14 @@ AUTOSTART_PROCESSES(&udp_process);
 
 //Global  connection
 static struct simple_udp_connection myConnection;
-static process_event_t eventReceived;
 
 //Callback
 static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender_addr,
                     uint16_t sender_port,const uip_ipaddr_t *receiver_addr, 
                     uint16_t receiver_port, const uint8_t *data, uint16_t datalen)
 {
-    //printf("Message received on port %u\n", (unsigned int)receiver_port);
-    static char msg[1024];
     uip_ipaddr_t ipv6Friend;
+    //Receivig from Node 2
     ipv6Friend.u16[0] = 0x80fe;
     ipv6Friend.u16[1] = 0;
     ipv6Friend.u16[2] = 0;
@@ -41,20 +39,22 @@ static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender
     ipv6Friend.u16[4] = 0x0cc3;
     ipv6Friend.u16[5] = 0;
     ipv6Friend.u16[6] = 0;
-    ipv6Friend.u16[7] = 0x6900;
-    //LOG_INFO_6ADDR(&ipv6Friend);
-    //printf("\n");
+    ipv6Friend.u16[7] = 0x0200;
     if(!memcmp(sender_addr->u16, ipv6Friend.u16, sizeof(uint16_t)*8))
     {
         LOG_INFO_6ADDR(sender_addr);
-        memcpy(msg,data,sizeof(msg)*sizeof(char));
-        process_post(&udp_process,eventReceived,msg);
-    }
-    else
-    {
-        printf("Not good ipv6: ");
-        LOG_INFO_6ADDR(sender_addr);
-        printf(" - %s\n",data);
+        if(strcmp((const char*)data, "led=on"))
+        {
+            LOG_INFO("LED ON");
+        }
+        else if(strcmp((const char*)data, "led=off"))
+        {
+            LOG_INFO("LED OFF");
+        }
+        else
+        {
+            LOG_INFO("Received data not good");
+        }
     }
 }
 
@@ -70,20 +70,6 @@ PROCESS_THREAD(udp_process, ev, data)
     etimer_set(&timer, CLOCK_SECOND*5);
     simple_udp_register(&myConnection, UDP_CLIENT_PORT, NULL, UDP_CLIENT_PORT, receiver);
 
-    static uip_ipaddr_t ipv6NextFriend;
-    ipv6NextFriend.u16[0] = 0x80fe;
-    ipv6NextFriend.u16[1] = 0;
-    ipv6NextFriend.u16[2] = 0;
-    ipv6NextFriend.u16[3] = 0;
-    ipv6NextFriend.u16[4] = 0x0cc3;
-    ipv6NextFriend.u16[5] = 0;
-    ipv6NextFriend.u16[6] = 0;
-    ipv6NextFriend.u16[7] = 0x6900;
-    LOG_INFO_6ADDR(&ipv6NextFriend);
-    printf("\n");
-
-    static struct timer waittimer;
-
     while(1) 
     {
         PROCESS_WAIT_EVENT();
@@ -91,20 +77,7 @@ PROCESS_THREAD(udp_process, ev, data)
         {
             /* Wait for the periodic timer to expire and then restart the timer. */
             
-            //simple_udp_sendto(&myConnection, msgPtr, sizeof(msg), &uipBroadcast);
-            simple_udp_sendto(&myConnection, "ABCDEFGHIJKLMNOPQRSTUVWXYZdwakdnmawlkndk", 50, &ipv6NextFriend);
-            printf("PING\n");
             etimer_reset(&timer);
-        }
-        else if(ev == eventReceived)
-        {
-            printf(" Message received: %s\n",(char*)data);
-            strcat((char*)data,", tu es un batard Michel");
-            //wait 1 sec
-            timer_set(&waittimer, CLOCK_SECOND*5);
-            printf("Message to send: %s\n",(char*)data);
-            simple_udp_sendto(&myConnection, data, 1024, &ipv6NextFriend);
-            //simple_udp_sendto(&myConnection, data, sizeof(data), &uipBroadcast);
         }
     }
     PROCESS_END();
