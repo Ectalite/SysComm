@@ -47,14 +47,7 @@ PROCESS_THREAD(udp_process, ev, data)
 
     //Sending to 4 from 2
     static uip_ipaddr_t ipv6NextFriend;
-    ipv6NextFriend.u16[0] = 0x80fe;
-    ipv6NextFriend.u16[1] = 0;
-    ipv6NextFriend.u16[2] = 0;
-    ipv6NextFriend.u16[3] = 0;
-    ipv6NextFriend.u16[4] = 0x0cc3;
-    ipv6NextFriend.u16[5] = 0;
-    ipv6NextFriend.u16[6] = 0;
-    ipv6NextFriend.u16[7] = 0x0400;
+    uip_ip6addr(&ipv6NextFriend, 0xfe80, 0x0, 0x0, 0x0, 0xc30c, 0x0, 0x0, 0x04);
     LOG_INFO_6ADDR(&ipv6NextFriend);
     printf("\n");
 

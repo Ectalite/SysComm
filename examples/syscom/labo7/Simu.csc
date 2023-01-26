@@ -117,8 +117,8 @@
     <mote>
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>57.2270742507122</x>
-        <y>25.94328741502456</y>
+        <x>63.75679110657358</x>
+        <y>25.159721392321195</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -130,8 +130,8 @@
     <mote>
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>33.1505901027372</x>
-        <y>36.96987644376446</y>
+        <x>29.755137337689277</x>
+        <y>37.753442466467824</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -143,8 +143,8 @@
     <mote>
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>33.12648294635108</x>
-        <y>63.095125229287724</y>
+        <x>29.208652832834254</x>
+        <y>69.62484208514911</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -156,8 +156,8 @@
     <mote>
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>79.97900430398826</x>
-        <y>39.20731118656919</y>
+        <x>95.12794740958667</x>
+        <y>37.64017914116246</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -169,8 +169,8 @@
     <mote>
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>80.6368507249542</x>
-        <y>64.6634871735963</y>
+        <x>95.52460515631815</x>
+        <y>68.0589399386442</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -191,7 +191,7 @@
       <viewport>3.8286499325860994 0.0 0.0 3.8286499325860994 -61.46607033572533 -44.34010814348212</viewport>
     </plugin_config>
     <width>400</width>
-    <z>0</z>
+    <z>3</z>
     <height>400</height>
     <location_x>1</location_x>
     <location_y>1</location_y>
@@ -199,12 +199,12 @@
   <plugin>
     org.contikios.cooja.plugins.LogListener
     <plugin_config>
-      <filter>ID:3</filter>
+      <filter />
       <formatted_time />
       <coloring />
     </plugin_config>
     <width>768</width>
-    <z>1</z>
+    <z>0</z>
     <height>240</height>
     <location_x>400</location_x>
     <location_y>160</location_y>
@@ -229,7 +229,7 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>346</width>
-    <z>3</z>
+    <z>2</z>
     <height>100</height>
     <location_x>5</location_x>
     <location_y>407</location_y>
@@ -242,7 +242,7 @@
       <scrollpos>0,0</scrollpos>
     </plugin_config>
     <width>350</width>
-    <z>2</z>
+    <z>1</z>
     <height>102</height>
     <location_x>4</location_x>
     <location_y>517</location_y>

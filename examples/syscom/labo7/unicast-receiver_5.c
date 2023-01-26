@@ -32,14 +32,7 @@ static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender
 {
     uip_ipaddr_t ipv6Friend;
     //Receivig from Node 3
-    ipv6Friend.u16[0] = 0x80fe;
-    ipv6Friend.u16[1] = 0;
-    ipv6Friend.u16[2] = 0;
-    ipv6Friend.u16[3] = 0;
-    ipv6Friend.u16[4] = 0x0cc3;
-    ipv6Friend.u16[5] = 0;
-    ipv6Friend.u16[6] = 0;
-    ipv6Friend.u16[7] = 0x0300;
+    uip_ip6addr(&ipv6Friend, 0xfe80, 0x0, 0x0, 0x0, 0xc30c, 0x0, 0x0, 0x03);
     if(!memcmp(sender_addr->u16, ipv6Friend.u16, sizeof(uint16_t)*8))
     {
         LOG_INFO_6ADDR(sender_addr);
